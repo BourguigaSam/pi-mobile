@@ -15,6 +15,7 @@ import com.codename1.main.Controller;
 import com.codename1.main.MainView;
 import com.codename1.main.Session;
 import com.codename1.messaging.Message;
+import com.codename1.notifications.LocalNotification;
 import com.codename1.ui.Button;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
@@ -26,6 +27,8 @@ import com.codename1.ui.Label;
 import com.codename1.ui.TextArea;
 import com.codename1.ui.TextField;
 import com.codename1.ui.URLImage;
+import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.UIManager;
@@ -33,16 +36,24 @@ import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import service.RentService;
+import com.twilio.Twilio;
+import com.twilio.type.PhoneNumber;
+
+
 
 /**
  *
- * @author hero
+ * @author LENOVO
  */
 public class RentDetailController extends Controller {
 
+    
+      public static final String ACCOUNT_SID = "ACc98bb8185a79cdc4f764686910fad80c";
+    public static final String AUTH_TOKEN = "1dd8dcb6bcaa2644e88d120c3f0b68bd";
+
+    
     public RentDetailController()
     {
         super();
@@ -67,7 +78,7 @@ public class RentDetailController extends Controller {
         try {
             Contract contr = new Contract();
             User u = Session.ConnectedUser;
-            f = new Form();
+            f = new Form(new BoxLayout(BoxLayout.Y_AXIS));
             f.getToolbar().setHidden(true);
             theme = UIManager.initFirstTheme("/theme");           
             titre = new Label();
@@ -78,7 +89,7 @@ public class RentDetailController extends Controller {
             List<Rent> lis = serviceTask.getList2(e.getId());
             SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
             for(Rent ev : lis){                
-                cc = new Container();
+                cc = new Container(new BoxLayout(BoxLayout.Y_AXIS));
                 //cd = new Container();
                 titre= new Label();
                 description = new SpanLabel();
@@ -92,7 +103,7 @@ public class RentDetailController extends Controller {
 
                 
                 mail = new SpanLabel();
-                mail.setText("Donner votre avis par mail à l'admin :");
+                mail.setText("Donner votre numero :");
                 send=new Button("Rent");
                 send.addActionListener(s->{   
                 System.out.println("=======================================================");
@@ -106,7 +117,26 @@ public class RentDetailController extends Controller {
                String finn=(new SimpleDateFormat("yyyy-MM-dd")).format(datePicker2.getDate());
                 RentService.addrent(debuitt,finn,num.getText());
                 
+                    
+                   SendMsg();
+                
+                
+                
                 });
+            
+                
+                
+                
+                
+                     
+               
+                
+                
+                
+                
+                
+                
+                
                 titre.setText("Titre :");
                 titre.getAllStyles().setUnderline(true);
                 Label tt = new Label(e.getMarque());
@@ -125,8 +155,9 @@ public class RentDetailController extends Controller {
                 cc.add(datePicker);
                 cc.add(datePicker2);
                 cc.add(mail);
+                                cc.add(num);
+
                 cc.add(send);
-                cc.add(num);
                 f.add(cc);               
                 }       
                 this.rootContainer.add(BorderLayout.CENTER,f);
@@ -137,4 +168,25 @@ public class RentDetailController extends Controller {
     @Override
     public void initialize() {
     }
+    
+        private void SendMsg()  {
+            
+            Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+com.twilio.rest.api.v2010.account.Message messages = com.twilio.rest.api.v2010.account.Message.creator(new PhoneNumber("+216"+num.getText()),
+        new PhoneNumber("+13347593893"), "Your request is going to be educated").create();
+            System.out.println("msg sent successfully to "+ "+216"+num.getText());
+}
+
+          /*  public void CheckIfEnabled(ActionEvent e) {
+                RentService serviceTask=new RentService();
+            List<Rent> lis2 = serviceTask.getList4(e.getId());
+                
+                                   Dialog.show("Succés", "Votre Contrat est approuvee avec succes ", "Ok", null);
+
+                
+   }*/
+        
+        
+        
+        
 }

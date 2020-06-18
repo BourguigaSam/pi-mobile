@@ -35,6 +35,8 @@ import org.apache.http.annotation.Contract;
  */
 public class RentService {
 
+    public ArrayList<Rent> getList2;
+
     public ArrayList<Rent> getList() {
         ArrayList<Rent> listTasks = new ArrayList<>();
         ConnectionRequest con = new ConnectionRequest();
@@ -98,6 +100,36 @@ public class RentService {
         return listTasks;
     }
 
+    
+     public ArrayList<Rent> getList3(String marque) {
+        ArrayList<Rent> listTasks = new ArrayList<>();
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl(Controller.ip + "/Pidev-web/web/app_dev.php/api/mobile/getrentapi/" + marque);
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                //listTasks = getListTask(new String(con.getResponseData()));
+                JSONParser jsonp = new JSONParser();
+                try {
+                    //renvoi une map avec clé = root et valeur le reste
+                    Map<String, Object> eventMap = jsonp.parseJSON(new CharArrayReader(new String(con.getResponseData()).toCharArray()));
+
+                    Rent event = new Rent();
+                  event.setMarque(eventMap.get("marque").toString());
+                    event.setImageId(eventMap.get("imageId").toString());
+                    event.setPuissance(eventMap.get("puissance").toString());
+                    event.setMatricule(eventMap.get("matricule").toString());
+                    Double x = (double) eventMap.get("dailyPrice");
+
+
+                    listTasks.add(event);
+                } catch (IOException ex) {
+                }
+            }
+        });
+//        NetworkManager.getInstance().addToQueueAndWait(con);
+        return listTasks;
+    }
 
  public void addrent(String debuit , String fin ,String num) {
               ConnectionRequest con=new ConnectionRequest();
@@ -120,8 +152,45 @@ public class RentService {
                 }
             });
         NetworkManager.getInstance().addToQueue(con);
+        
+        
+        
+        
+        
+        
+        
     }
 
+ 
+  public ArrayList<Rent> getList4(String marque) {
+        ArrayList<Rent> listTasks = new ArrayList<>();
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl(Controller.ip + "/Pidev-web/web/app_dev.php/api/mobile/getrentapi/" + marque);
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                //listTasks = getListTask(new String(con.getResponseData()));
+                JSONParser jsonp = new JSONParser();
+                try {
+                    //renvoi une map avec clé = root et valeur le reste
+                    Map<String, Object> eventMap = jsonp.parseJSON(new CharArrayReader(new String(con.getResponseData()).toCharArray()));
+
+                    Rent event = new Rent();
+                  event.setMarque(eventMap.get("marque").toString());
+                    event.setImageId(eventMap.get("imageId").toString());
+                    event.setPuissance(eventMap.get("puissance").toString());
+                    event.setMatricule(eventMap.get("matricule").toString());
+                    Double x = (double) eventMap.get("dailyPrice");
+
+
+                    listTasks.add(event);
+                } catch (IOException ex) {
+                }
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+        return listTasks;
+    }
 
        
     
